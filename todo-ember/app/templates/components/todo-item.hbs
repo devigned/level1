@@ -1,0 +1,23 @@
+<div class="row clearfix">
+  {{#if todo_item.completed }}
+    <div class="complete">
+      <a href="#" {{action "complete" todo_item}}><i style="opacity: 0.4;" class="fa fa-check"></i></a>
+    </div>
+    <div class="todo_item">
+      <p style="opacity: 0.4;"><strike>{{ todo_item.content }}</strike></p>
+    </div>
+    <div class="trash">
+      <a href="#" {{action "delete" todo_item}}><i class="fa fa-trash"></i></a>
+    </div>
+  {{ else }}
+    <div class="complete">
+      <a href="#" {{action "complete" todo_item}}><i class="fa fa-check"></i></a>
+    </div>
+    <div class="todo_item">
+      <p>{{todo_item.content}}</p>
+    </div>
+    <div class="trash">
+      <a href="#" {{action "delete" todo_item}}><i class="fa fa-trash"></i></a>
+    </div>
+  {{/if}}
+</div>

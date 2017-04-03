@@ -1,0 +1,28 @@
+<h2 class="todo_list_title">{{ model.title }}</h2>
+<p class="todo_list_sub_title">{{ model.description }}</p>
+
+<div id="todo_items_wrapper">
+  {{#each model.todoItems as |todo|}}
+    {{#todo-item todo_item=todo complete=completeTodo delete=deleteTodo}}{{/todo-item}}
+  {{/each}}
+  <div id="form">
+    <form {{action "createTodo" on="submit"}}>
+      <div class="field">
+        {{input
+          type="text"
+          id="newContent"
+          placeholder="New Todo"
+          value=newContent}}
+      </div>
+      <div class="actions">
+        <input type="submit" value="Save" />
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="links">
+  {{#link-to "todo-lists.edit" model }}Edit{{/link-to}} |
+  {{#link-to "todo-lists" }}Back{{/link-to}} |
+  <a href="#" {{action "deleteList" }}>Delete</a>
+</div>

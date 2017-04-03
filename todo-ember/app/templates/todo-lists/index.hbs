@@ -1,0 +1,9 @@
+{{#each model as |todo_list|}}
+  <div class="index_row clearfix">
+    {{#todo-list-row model=todo_list}}{{/todo-list-row}}
+  </div>
+{{/each}}
+
+<div class="links">
+  {{#link-to "todo-lists.new"}}New Todo List{{/link-to}}
+</div>

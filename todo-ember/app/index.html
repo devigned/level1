@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Todo</title>
+    <meta name="description" content="Ember Todo List">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    {{content-for "head"}}
+
+    <link href='http://fonts.googleapis.com/css?family=Lato:300,400,700' rel='stylesheet' type='text/css'>
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{rootURL}}assets/vendor.css">
+    <link rel="stylesheet" href="{{rootURL}}assets/todo-ember.css">
+
+    {{content-for "head-footer"}}
+  </head>
+  <body>
+      {{content-for "body"}}
+
+      <script src="{{rootURL}}assets/vendor.js"></script>
+      <script src="{{rootURL}}assets/todo-ember.js"></script>
+
+      {{content-for "body-footer"}}
+  </body>
+</html>

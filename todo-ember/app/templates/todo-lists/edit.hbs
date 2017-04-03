@@ -1,0 +1,27 @@
+<h1 class="todo_list_title">Edit Todo List</h1>
+
+<div class="forms">
+  <form {{action "updateList" on="submit"}}>
+    <div class="field">
+      {{input
+        type="text"
+        id="title"
+        placeholder="What should you name this list?"
+        value=model.title}}
+    </div>
+    <div class="field">
+      {{input
+        type="text"
+        id="descrption"
+        placeholder="How would you describe the list?"
+        value=model.description}}
+    </div>
+    <div class="actions">
+      <input type="submit" value="Save" />
+    </div>
+  </form>
+</div>
+
+<div class="links">
+  {{#link-to "todo-lists"}}Back{{/link-to}}
+</div>
