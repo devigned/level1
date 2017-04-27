@@ -25,10 +25,10 @@ packages:
 runcmd:
   - curl -sSL https://get.rvm.io | bash -s stable --rails
   - usermod -a -G rvm deploy
-  - cat /var/lib/waagent/3EF38981A3EAE51D34E06C93D6D074216DD75323.crt /var/lib/waagent/3EF38981A3EAE51D34E06C93D6D074216DD75323.prv > /home/deploy/.az-cert
+  - cat /var/lib/waagent/{{ fingerprint }}.crt /var/lib/waagent/{{ fingerprint }}.prv > /home/deploy/.az-cert
   - chown deploy:deploy /home/deploy/.az-cert
   - chmod 400 /home/deploy/.az-cert
-  - sudo -H -u deploy az login --service-principal -t 9148c3a5-1e1b-4e0a-87c2-302229534991 -u http://level1-sp -p /home/deploy/.az-cert
+  - sudo -H -u deploy az login --service-principal -t {{ tenant }} -u {{ username }} -p /home/deploy/.az-cert
 
 # Print message at the end of cloud-init job
 final_message: "The system is up, after $UPTIME seconds"
