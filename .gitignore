@@ -2,3 +2,4 @@
 .idea/
 *.pem
 *.crt
+scripts/cloud-config.yml
