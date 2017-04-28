@@ -1,10 +1,11 @@
 # Change the 'YOUR_AZURE_VM_IP' to the publicIpAddress from the output of
 # `az vm create` command executed above
-server '13.64.246.35', roles: [:web, :app, :db], primary: true
+require 'json'
+role: :app, JSON.parse(`az vm list -g level1 -d --query "[].publicIps"`)
 
 # Change the YOUR_GITHUB_NAME to your github user name
-set :repo_url,        'git@github.com:devigned/level0.git'
-set :application,     'level0'
+set :repo_url,        'git@github.com:devigned/level1.git'
+set :application,     'level1'
 set :user,            'deploy'
 set :puma_threads,    [4, 16]
 set :puma_workers,    0
@@ -49,15 +50,7 @@ namespace :deploy do
     end
   end
 
-  task :symlink_secrets do
-    on roles(:app) do
-      execute "rm -rf #{release_path}/config/secrets.yml"
-      execute "ln -nfs ~/secrets.yml #{release_path}/config/secrets.yml"
-    end
-  end
-
   before :starting,     :check_revision
-  after  :finishing,    :symlink_secrets
   after  :finishing,    :compile_assets
   after  :finishing,    :cleanup
 end
