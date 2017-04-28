@@ -5,6 +5,7 @@ role :app, JSON.parse(`az vm list -g level1 -d --query "[].publicIps"`)
 
 # Change the YOUR_GITHUB_NAME to your github user name
 set :repo_url,        'git@github.com:devigned/level1.git'
+set :repo_tree,       'api-ruby'
 set :application,     'level1'
 set :user,            'deploy'
 set :puma_threads,    [4, 16]
@@ -47,6 +48,16 @@ namespace :deploy do
         puts "Run `git push` to sync changes."
         exit
       end
+    end
+  end
+
+  desc 'Initial Deploy'
+  task :initial do
+    on roles(:app) do
+      execute "sudo rm -f /etc/nginx/sites-enabled/default"
+      execute "sudo ln -nfs #{release_path}/api-ruby/config/nginx.conf /etc/nginx/sites-enabled/level1"
+      execute "sudo service nginx restart"
+      invoke 'deploy'
     end
   end
 
