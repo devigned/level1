@@ -57,7 +57,7 @@ namespace :deploy do
     on roles(:app) do
       invoke 'deploy'
       execute "sudo rm -f /etc/nginx/sites-enabled/default"
-      execute "sudo ln -nfs #{current_path}/config/nginx.conf /etc/nginx/sites-enabled/level1"
+      execute "sudo ln -nfs #{release_path}/config/nginx.conf /etc/nginx/sites-enabled/level1"
       execute "sudo service nginx restart"
     end
   end
