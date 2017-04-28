@@ -50,6 +50,16 @@ namespace :deploy do
     end
   end
 
+  desc 'Initial Deploy'
+  task :initial do
+    on roles(:app) do
+      execute "sudo rm /etc/nginx/sites-enabled/default"
+      execute "sudo ln -nfs /home/deploy/apps/level1/current/config/nginx.conf /etc/nginx/sites-enabled/level1"
+      execute "sudo service nginx restart"
+      invoke 'deploy'
+    end
+  end
+
   before :starting,     :check_revision
   after  :finishing,    :compile_assets
   after  :finishing,    :cleanup
