@@ -57,7 +57,7 @@ namespace :deploy do
   task :build_ember do
     on roles(:app) do
       execute "az "
-      execute "cd '#{release_path}/todo-ember'; npm install && ember build --environment production && cp -R dist/* ../public"
+      execute "cd '#{release_path}/todo-ember'; npm install -q && ember build --environment production && cp -R dist/* ../public"
     end
   end
 
