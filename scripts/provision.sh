@@ -8,7 +8,7 @@ name_prefix="level1"
 new_name=$(echo $(mktemp -u ${name_prefix}XXXXX) | tr '[:upper:]' '[:lower:]')
 cert_name="sp-cert-level1"
 sp_name="level1-sp"
-vm_name="level1-vm"
+vm_name="level1-vmss"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # Login if you haven't already
@@ -69,14 +69,22 @@ if [[ "$(az vm show -g ${group_id} -n ${vm_name} --query "provisioningState=='Su
     tenant="$(az account show --query 'tenantId' -o tsv)"
     fingerprint="$(az keyvault certificate show --vault-name ${vault_name} -n ${cert_name} --query "x509ThumbprintHex" -o tsv)"
     sed -- "s/{{ tenant }}/${tenant}/g;s/{{ username }}/http:\/\/${sp_name}/g;s/{{ fingerprint }}/${fingerprint}/g" scripts/cloud-config-template.yml > "${DIR}/cloud-config.yml"
-    az vm create -g ${group_id} -n ${vm_name} --admin-username deploy --image UbuntuLTS --secrets "$vm_secret" --custom-data "${DIR}/cloud-config.yml" 1>/dev/null
-    az vm open-port -g ${group_id} -n ${vm_name} --port 80 1>/dev/null
+    az vmss create -g ${group_id} -n ${vm_name} --admin-username deploy --image UbuntuLTS --secrets "$vm_secret" --custom-data "${DIR}/cloud-config.yml" --public-ip-address-dns-name ${new_name} 1>/dev/null
 else
     echo "Using existing VM ${vm_name} in group ${group_id}, which has already been provisioned with a Key Vault secret (certificate use for service principal auth)"
 fi
 
+if [[ -z "$(az cdn profile show -g ${group_id} -n ${group_id})" ]]; then
+    echo "Create CDN profile named ${group_id} and endpoint named ${new_name} which will provide edge content nodes using Akamai (Verizon is also supported)"
+    az cdn profile create -g ${group_id} -n ${group_id} 1>/dev/null
+    az cdn endpoint create -g ${group_id} -n ${new_name} --profile-name ${group_id} 1>/dev/null
+else
+    cdn_name=$(az cdn endpoint list -g ${group_id} --profile-name ${group_id} --query "[?starts_with(name, '${name_prefix}')] | [0].name" -o tsv)
+    echo "Using the already provisioned CDN profile named ${group_id} and endpoint named ${cdn_name}"
+fi
 
-echo "SSH into the VM: ssh deploy@$(az vm show -d -g level1 -n level1-vm --query 'publicIps' -o tsv)"
+echo "SSH into the VMSS instances run the following:"
+for fn in `az vmss list-instance-connection-info -g ${group_id} -n ${vm_name} -o tsv`; do echo "ssh deploy@$fn"; done
 
 
 

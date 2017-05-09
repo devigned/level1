@@ -1,7 +1,7 @@
 # Change the 'YOUR_AZURE_VM_IP' to the publicIpAddress from the output of
 # `az vm create` command executed above
 require 'json'
-role :app, JSON.parse(`az vm list -g level1 -d --query "[].publicIps"`)
+role :app, JSON.parse(`az vmss list-instance-connection-info -g level1 -n level1-vmss`)
 
 # Change the YOUR_GITHUB_NAME to your github user name
 set :repo_url,        'git@github.com:devigned/level1.git'
@@ -53,6 +53,14 @@ namespace :deploy do
     end
   end
 
+  desc 'Build and Ember Assets' 
+  task :build_ember do
+    on roles(:app) do
+      execute "az "
+      execute "cd '#{release_path}../todo-ember'; npm install && ember build --environment production && cp -R dist/* ../api-ruby/public"
+    end
+  end
+
   desc 'Initial Deploy'
   task :initial do
     on roles(:app) do
@@ -65,6 +73,7 @@ namespace :deploy do
 
   before :starting,     :check_revision
   after  :finishing,    :compile_assets
+  after  :finishing,    :build_ember
   after  :finishing,    :cleanup
 end
 
