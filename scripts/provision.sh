@@ -71,7 +71,16 @@ if [[ -z "$(az network public-ip show -g ${group_id} -n ${vmss_name} --query "dn
     fingerprint="$(az keyvault certificate show --vault-name ${vault_name} -n ${cert_name} --query "x509ThumbprintHex" -o tsv)"
     sed -- "s/{{ tenant }}/${tenant}/g;s/{{ username }}/http:\/\/${sp_name}/g;s/{{ fingerprint }}/${fingerprint}/g" scripts/cloud-config-template.yml > "${DIR}/cloud-config.yml"
     az vmss create -g ${group_id} -n ${vmss_name} --instance-count 3 --admin-username deploy --image UbuntuLTS --secrets "$vm_secret" \
-        --custom-data "${DIR}/cloud-config.yml" --public-ip-address-dns-name ${new_name} --public-ip-address ${vmss_name} 1>/dev/null
+        --custom-data "${DIR}/cloud-config.yml" --public-ip-address-dns-name ${new_name} --public-ip-address ${vmss_name} --lb ${vmss_name} 1>/dev/null
+
+    echo "Creating load balancer health probe for HTTP traffic on the root of the web application"
+    az network lb probe create -g ${group_id} -n root-http-probe --lb-name ${vmss_name} --port 80 --protocol Http --path / 1>/dev/null
+
+    echo "Creating load balancer rule to route HTTP traffic from the frontend IP on port 80 to the backend pool on port 80"
+    frontend_ip_confg_name=$(az network lb show -g ${group_id} -n ${vmss_name} --query "frontendIpConfigurations[0].name" -o tsv)
+    backend_pool_name=$(az network lb show -g ${group_id} -n ${vmss_name} --query "backendAddressPools[0].name" -o tsv)
+    az network lb rule create -g ${group_id} --lb-name ${vmss_name} -n http-traffic-rule --protocol Tcp \
+        --frontend-ip-name ${frontend_ip_confg_name} --frontend-port 80 --backend-pool-name ${backend_pool_name} --backend-port 80
 else
     echo "Using existing VM Scale Set ${vmss_name} in group ${group_id}, which has already been provisioned with a Key Vault secret (certificate use for service principal auth)"
 fi

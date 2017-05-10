@@ -23,8 +23,8 @@ production:
   clients:
     default:
       <% if Rails.env.production? %>
-      <% docdb_name=`az documentdb list -g level1 --query "[?starts_with(name, 'level1')] | [0].name" -o tsv`.strip %>
-      <% conn_strings=JSON.parse(`az documentdb list-connection-strings -g level1 -n '#{docdb_name}'`) %>
+      <% cosmosdb_name=`az cosmosdb list -g level1 --query "[?starts_with(name, 'level1')] | [0].name" -o tsv`.strip %>
+      <% conn_strings=JSON.parse(`az cosmosdb list-connection-strings -g level1 -n '#{cosmosdb_name}'`) %>
       uri: <%= conn_strings["connectionStrings"][0]["connectionString"] %>
       <% end %>
       options:
