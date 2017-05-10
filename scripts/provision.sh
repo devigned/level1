@@ -99,7 +99,7 @@ else
 fi
 
 echo "-------------"
-echo "Scale set is publically exposed on 80 and 443 via FQDN: $(az network public-ip show -g ${group_id} -n ${vmss_name} --query "dnsSettings.fqdn" -o tsv)"
+echo "Scale set is publically exposed on 80 via FQDN: $(az network public-ip show -g ${group_id} -n ${vmss_name} --query "dnsSettings.fqdn" -o tsv)"
 echo "CDN is fronting the load balanced Scale Set via $(az cdn endpoint show -g "${group_id}" -n "${cdn_name}" --profile-name "${group_id}" --query "hostName" -o tsv)"
 echo "You can SSH into the VM Scale Set instances via the following IP and port combinations:"
 for conn_string in $(az vmss list-instance-connection-info -g ${group_id} -n ${vmss_name} -o tsv); do echo "ssh deploy@$(echo "${conn_string}" | sed -- s/:/' -p '/g)"; done
