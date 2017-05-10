@@ -21,7 +21,7 @@ DevOps maturity (Level 1).
 - /api/v1/todo_lists
 - /api/v1/todo_items
 
-## [Ember](./todo-ember)
+## [Ember](./api-ruby/todo-ember)
 - Standard
 
 ## Azure Functionality Used:
