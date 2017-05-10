@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-set -eux
+# add 'x' to the set command to see verbose output from each of the statements
+set -eu
 
 group_id="level1"
 location="westus"

@@ -33,3 +33,11 @@ DevOps maturity (Level 1).
 - Azure Key Vault
 - Azure Active Directory Service Principal
 - (optional) Azure Scale Sets
+
+## How to run this sample
+- Clone the repo and `cd` into the root of the repo
+- Run `./scripts/provision`. This will build all of the Azure infrastructure.
+  - change `set -eu` in `./scripts/provision` to `set -eux` if you'd like see verbose / debug script output.
+- From the root of the repo, `cd api-ruby`.
+- Run `bundle exec cap production deploy:initial`. This will deploy the Ember / Rails Todo application to your Azure infrastructure.
+- Run `echo http://$(az network public-ip show -g level1 -n level1-vmss --query 'dnsSettings.fqdn' -o tsv)` to get th
