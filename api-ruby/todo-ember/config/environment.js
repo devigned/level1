@@ -18,6 +18,7 @@ module.exports = function(environment) {
     },
 
     APP: {
+      ApiHost: 'http://localhost:3000'
       // Here you can pass flags/options to your application instance
       // when it is created
     }
@@ -43,7 +44,7 @@ module.exports = function(environment) {
   }
 
   if (environment === 'production') {
-
+    ENV.APP.ApiHost = '{{ API_HOST }}';
   }
 
   return ENV;

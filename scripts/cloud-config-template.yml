@@ -16,20 +16,22 @@ packages:
   - curl
   - git-core
   - nginx
-  - nodejs
-  - npm
   - apt-transport-https
   - ca-certificates
   - azure-cli
+  - build-essential
 
 # Commands to prepare the Habitat development environment
 runcmd:
   - curl -sSL https://get.rvm.io | bash -s stable --rails
   - usermod -a -G rvm deploy
+  - curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash -
+  - sudo apt-get install -y nodejs
   - cat /var/lib/waagent/{{ fingerprint }}.crt /var/lib/waagent/{{ fingerprint }}.prv > /home/deploy/.az-cert
   - chown deploy:deploy /home/deploy/.az-cert
   - chmod 400 /home/deploy/.az-cert
   - sudo -H -u deploy az login --service-principal -t {{ tenant }} -u {{ username }} -p /home/deploy/.az-cert
+  - sudo -H -u deploy npm install -g ember
 
 # Print message at the end of cloud-init job
 final_message: "The system is up, after $UPTIME seconds"

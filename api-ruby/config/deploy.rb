@@ -56,8 +56,15 @@ namespace :deploy do
   desc 'Build and Ember Assets' 
   task :build_ember do
     on roles(:app) do
-      execute "az "
-      execute "cd '#{release_path}/todo-ember'; npm install -q && ember build --environment production && cp -R dist/* ../public"
+      api_host = `az network public-ip show -g level1 -n level1-vmss --query 'dnsSettings.fqdn' -o tsv`.strip
+      cmd = <<-CMD
+      cd '#{release_path}/todo-ember'&& npm install --no-progress && \
+      sed -- "s/{{ API_HOST }}/http:\/\/#{api_host}/g" config/environment.js -i
+      CDN_HOST=http://$(az cdn endpoint list -g level1 --profile-name level1 --query '[0] | hostName' -o tsv)/ ./node_modules/ember-cli/bin/ember build --silent --environment production && \
+      rm -rf ../public/* && \
+       cp -R dist/* ../public
+CMD
+       execute cmd
     end
   end
 
@@ -66,13 +73,12 @@ namespace :deploy do
     on roles(:app) do
       invoke 'deploy'
       execute "sudo rm -f /etc/nginx/sites-enabled/default"
-      execute "sudo ln -nfs #{release_path}/config/nginx.conf /etc/nginx/sites-enabled/level1"
+      execute "sudo ln -nfs #{current_path}/config/nginx.conf /etc/nginx/sites-enabled/level1"
       execute "sudo service nginx restart"
     end
   end
 
   before :starting,     :check_revision
-  after  :finishing,    :compile_assets
   after  :finishing,    :build_ember
   after  :finishing,    :cleanup
 end
