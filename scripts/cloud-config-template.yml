@@ -31,7 +31,7 @@ runcmd:
   - chown deploy:deploy /home/deploy/.az-cert
   - chmod 400 /home/deploy/.az-cert
   - sudo -H -u deploy az login --service-principal -t {{ tenant }} -u {{ username }} -p /home/deploy/.az-cert
-  - sudo -H -u deploy npm install -g ember
+  - npm install -g ember-cli
 
 # Print message at the end of cloud-init job
 final_message: "The system is up, after $UPTIME seconds"
